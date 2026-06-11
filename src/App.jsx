@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+// ВАЖНО: Используем HashRouter для GitHub Pages
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   Link,
@@ -36,20 +37,7 @@ import {
 import "./App.css";
 
 // --- ЕДИНЫЕ НАСТРОЙКИ АНИМАЦИЙ ---
-const ease = [0.25, 0.1, 0.25, 1]; // плавный cubic-bezier
-
-const fadeIn = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.4, ease },
-};
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -12 },
-};
+const ease = [0.25, 0.1, 0.25, 1];
 
 const pageTransition = {
   initial: { opacity: 0, y: 16 },
@@ -58,21 +46,12 @@ const pageTransition = {
 };
 
 const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
-  },
+  animate: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
 };
 
 const staggerChild = {
   initial: { opacity: 0, y: 20 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease },
-  },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
 };
 
 // --- КОМПОНЕНТЫ ---
@@ -81,14 +60,12 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
-  // Правильный scroll listener с cleanup
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Скролл наверх при смене страницы
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
@@ -163,15 +140,12 @@ const Footer = () => (
             </a>
           </div>
         </div>
-
         <div className="footer-links">
           <h4>Услуги</h4>
           <Link to="/uslugi">Ремонт квартир</Link>
           <Link to="/uslugi">Ремонт ванных</Link>
           <Link to="/uslugi">Дизайн интерьера</Link>
-          <Link to="/uslugi">Коммерция</Link>
         </div>
-
         <div className="footer-links">
           <h4>Информация</h4>
           <Link to="/portfolio">Портфолио</Link>
@@ -179,7 +153,6 @@ const Footer = () => (
           <Link to="/o-nas">О компании</Link>
           <Link to="/kontakty">Контакты</Link>
         </div>
-
         <div className="footer-contact">
           <h4>Контакты</h4>
           <div className="contact-item">
@@ -194,19 +167,10 @@ const Footer = () => (
             <MapPin size={18} />
             <span>Москва, ул. Строителей, 10</span>
           </div>
-          <div className="contact-item">
-            <Clock size={18} />
-            <span>Пн-Пт: 9:00 - 20:00</span>
-          </div>
         </div>
       </div>
-
       <div className="footer-bottom">
         <p>© 2026 PerfStroy. Все права защищены.</p>
-        <div className="footer-bottom-links">
-          <a href="#">Политика конфиденциальности</a>
-          <a href="#">Договор оферты</a>
-        </div>
       </div>
     </div>
   </footer>
@@ -234,7 +198,7 @@ const Home = () => {
     {
       icon: <TrendingUp size={28} />,
       title: "Честная цена",
-      desc: "Фиксированная смета без скрытых платежей",
+      desc: "Фиксированная смета",
     },
   ];
 
@@ -251,7 +215,7 @@ const Home = () => {
       price: "от 12 000 ₽/м²",
       image:
         "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
-      desc: "Полная замена всех коммуникаций",
+      desc: "Полная замена коммуникаций",
     },
     {
       title: "Дизайнерский ремонт",
@@ -262,46 +226,8 @@ const Home = () => {
     },
   ];
 
-  const portfolio = [
-    {
-      title: "Современная квартира 85 м²",
-      image:
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
-      area: "85 м²",
-      time: "3 месяца",
-    },
-    {
-      title: "Скандинавская гостиная",
-      image:
-        "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=80",
-      area: "42 м²",
-      time: "2 месяца",
-    },
-    {
-      title: "Ванная комната премиум",
-      image:
-        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80",
-      area: "12 м²",
-      time: "3 недели",
-    },
-  ];
-
-  const testimonials = [
-    {
-      text: "Отличная команда! Сделали ремонт в квартире за 2.5 месяца, хотя обещали 3. Качеством очень довольны, все ровно, аккуратно.",
-      author: "Александр Петров",
-      project: "Ремонт 3-комнатной квартиры, 95 м²",
-    },
-    {
-      text: "Заказывали дизайнерский ремонт. Результат превзошел ожидания! Отдельное спасибо дизайнеру за терпение и понимание.",
-      author: "Елена Смирнова",
-      project: "Дизайнерский ремонт, 120 м²",
-    },
-  ];
-
   return (
     <motion.div {...pageTransition} className="page">
-      {/* Hero Section */}
       <section className="hero hero-modern">
         <div className="hero-bg">
           <img
@@ -316,14 +242,7 @@ const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease, delay: 0.2 }}
           >
-            <motion.span
-              className="hero-badge"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, ease, delay: 0.3 }}
-            >
-              ✓ Работаем с 2014 года
-            </motion.span>
+            <span className="hero-badge">✓ Работаем с 2014 года</span>
             <h1 className="hero-title">
               Ремонт квартир
               <br />
@@ -331,42 +250,20 @@ const Home = () => {
             </h1>
             <p className="hero-subtitle">
               Создаём пространства для комфортной жизни. Гарантия до 5 лет.
-              Рассрочка 0%. Бесплатный дизайн-проект при заказе ремонта под
-              ключ.
+              Рассрочка 0%.
             </p>
             <div className="hero-buttons">
               <Link to="/kontakty" className="btn btn-primary btn-large">
-                Бесплатная консультация
-                <ArrowRight size={20} />
+                Бесплатная консультация <ArrowRight size={20} />
               </Link>
               <Link to="/portfolio" className="btn btn-outline btn-large">
                 Наши работы
               </Link>
             </div>
-            <motion.div
-              className="hero-stats"
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-            >
-              <motion.div className="stat" variants={staggerChild}>
-                <span className="stat-number">500+</span>
-                <span className="stat-label">Реализованных проектов</span>
-              </motion.div>
-              <motion.div className="stat" variants={staggerChild}>
-                <span className="stat-number">10</span>
-                <span className="stat-label">Лет опыта</span>
-              </motion.div>
-              <motion.div className="stat" variants={staggerChild}>
-                <span className="stat-number">5</span>
-                <span className="stat-label">Лет гарантии</span>
-              </motion.div>
-            </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* Features */}
       <section className="features-section">
         <div className="container">
           <motion.div
@@ -391,31 +288,24 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Services Preview */}
       <section className="section services-section">
         <div className="container">
           <motion.div
             className="section-header"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5, ease }}
           >
             <span className="section-tag">Наши услуги</span>
-            <h2 className="section-title">
-              Выберите подходящий вариант ремонта
-            </h2>
-            <p className="section-subtitle">
-              От косметического до дизайнерского ремонта любой сложности
-            </p>
+            <h2 className="section-title">Выберите подходящий вариант</h2>
           </motion.div>
-
           <motion.div
             className="services-cards"
             variants={staggerContainer}
             initial="initial"
             whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
           >
             {services.map((service, idx) => (
               <motion.div
@@ -439,119 +329,9 @@ const Home = () => {
               </motion.div>
             ))}
           </motion.div>
-
-          <motion.div
-            className="text-center"
-            style={{ marginTop: "48px" }}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <Link to="/uslugi" className="btn btn-outline">
-              Все услуги
-              <ChevronRight size={18} />
-            </Link>
-          </motion.div>
         </div>
       </section>
 
-      {/* Portfolio Preview */}
-      <section className="section portfolio-section">
-        <div className="container">
-          <motion.div
-            className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, ease }}
-          >
-            <span className="section-tag">Портфолио</span>
-            <h2 className="section-title">Последние проекты</h2>
-            <p className="section-subtitle">Реальные работы нашей команды</p>
-          </motion.div>
-
-          <motion.div
-            className="portfolio-grid-modern"
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            {portfolio.map((item, idx) => (
-              <motion.div
-                key={idx}
-                variants={staggerChild}
-                className="portfolio-card-modern"
-              >
-                <div className="portfolio-image">
-                  <img src={item.image} alt={item.title} loading="lazy" />
-                  <div className="portfolio-info">
-                    <span className="badge">{item.area}</span>
-                    <span className="badge">{item.time}</span>
-                  </div>
-                </div>
-                <h3>{item.title}</h3>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.div
-            className="text-center"
-            style={{ marginTop: "48px" }}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <Link to="/portfolio" className="btn btn-primary">
-              Смотреть все работы
-              <ArrowRight size={18} />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="section testimonials-section">
-        <div className="container">
-          <motion.div
-            className="section-header"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, ease }}
-          >
-            <span className="section-tag">Отзывы</span>
-            <h2 className="section-title">Что говорят наши клиенты</h2>
-          </motion.div>
-
-          <motion.div
-            className="testimonials-grid"
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-          >
-            {testimonials.map((item, idx) => (
-              <motion.div
-                key={idx}
-                variants={staggerChild}
-                className="testimonial-card"
-              >
-                <Quote size={32} className="quote-icon" />
-                <p className="testimonial-text">{item.text}</p>
-                <div className="testimonial-author">
-                  <div className="author-name">{item.author}</div>
-                  <div className="author-project">{item.project}</div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
       <section className="cta-section-modern">
         <div className="cta-bg">
           <img
@@ -580,8 +360,7 @@ const Home = () => {
                 href="tel:+79991234567"
                 className="btn btn-outline-white btn-large"
               >
-                <Phone size={18} />
-                Позвонить
+                <Phone size={18} /> Позвонить
               </a>
             </div>
           </motion.div>
@@ -600,12 +379,10 @@ const Services = () => {
       image:
         "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=800&q=80",
       features: [
-        "Покраска стен и потолков",
-        "Замена напольных покрытий",
+        "Покраска стен",
+        "Замена покрытий",
         "Замена дверей",
         "Установка светильников",
-        "Монтаж плинтусов",
-        "Обои или покраска",
       ],
     },
     {
@@ -617,10 +394,8 @@ const Services = () => {
       features: [
         "Замена электрики",
         "Замена сантехники",
-        "Выравнивание стен и полов",
+        "Выравнивание стен",
         "Укладка плитки",
-        "Монтаж натяжных потолков",
-        "Установка дверей",
       ],
     },
     {
@@ -630,56 +405,10 @@ const Services = () => {
       image:
         "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
       features: [
-        "Разработка дизайн-проекта",
+        "Дизайн-проект",
         "3D визуализация",
         "Авторский надзор",
         "Премиум материалы",
-        "Индивидуальные решения",
-        "Комплектация объекта",
-      ],
-    },
-    {
-      title: "Ремонт ванной комнаты",
-      price: "от 80 000 ₽",
-      time: "2-4 недели",
-      image:
-        "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80",
-      features: [
-        "Демонтаж старой отделки",
-        "Замена труб",
-        "Укладка плитки",
-        "Установка сантехники",
-        "Монтаж теплого пола",
-        "Установка вентиляции",
-      ],
-    },
-    {
-      title: "Ремонт кухни",
-      price: "от 100 000 ₽",
-      time: "3-6 недель",
-      image:
-        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
-      features: [
-        "Замена коммуникаций",
-        "Укладка фартука",
-        "Монтаж кухонного гарнитура",
-        "Подключение техники",
-        "Установка освещения",
-      ],
-    },
-    {
-      title: "Дизайн интерьера",
-      price: "от 2 000 ₽/м²",
-      time: "2-4 недели",
-      image:
-        "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80",
-      features: [
-        "Замеры помещения",
-        "Планировочное решение",
-        "3D визуализация",
-        "Чертежи для строителей",
-        "Подбор материалов",
-        "Смета",
       ],
     },
   ];
@@ -694,14 +423,13 @@ const Services = () => {
             Профессиональный ремонт любой сложности
           </p>
         </div>
-
         <div className="services-detailed-grid">
           {services.map((service, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
+              viewport={{ once: true }}
               transition={{ duration: 0.6, ease }}
               className="service-detailed-card-modern"
             >
@@ -743,7 +471,7 @@ const Services = () => {
 const Portfolio = () => {
   const projects = [
     {
-      title: 'Современная квартира в ЖК "Панорама"',
+      title: "Современная квартира",
       area: "85 м²",
       time: "3 месяца",
       budget: "1.2 млн ₽",
@@ -766,30 +494,6 @@ const Portfolio = () => {
       image:
         "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80",
     },
-    {
-      title: "Кухня-гостиная",
-      area: "35 м²",
-      time: "2 месяца",
-      budget: "580 000 ₽",
-      image:
-        "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
-    },
-    {
-      title: "Детская комната",
-      area: "18 м²",
-      time: "1 месяц",
-      budget: "320 000 ₽",
-      image:
-        "https://images.unsplash.com/photo-1567016432779-094069958ea5?w=800&q=80",
-    },
-    {
-      title: "Спальня в классическом стиле",
-      area: "22 м²",
-      time: "6 недель",
-      budget: "480 000 ₽",
-      image:
-        "https://images.unsplash.com/photo-1616594039964-40891a909d99?w=800&q=80",
-    },
   ];
 
   return (
@@ -800,7 +504,6 @@ const Portfolio = () => {
           <h1 className="page-title">Наши работы</h1>
           <p className="page-subtitle">Более 500 реализованных проектов</p>
         </div>
-
         <motion.div
           className="portfolio-full-grid-modern"
           variants={staggerContainer}
@@ -844,11 +547,8 @@ const Prices = () => (
       <div className="page-header">
         <span className="section-tag">Цены</span>
         <h1 className="page-title">Стоимость ремонта</h1>
-        <p className="page-subtitle">
-          Прозрачное ценообразование без скрытых платежей
-        </p>
+        <p className="page-subtitle">Прозрачное ценообразование</p>
       </div>
-
       <motion.div
         className="pricing-grid-modern"
         variants={staggerContainer}
@@ -859,7 +559,6 @@ const Prices = () => (
           <div className="pricing-header">
             <h3>Эконом</h3>
             <div className="pricing-price">от 5 000 ₽/м²</div>
-            <p>Базовый ремонт для тех, кто хочет быстро обновить интерьер</p>
           </div>
           <ul className="pricing-features">
             <li>
@@ -869,23 +568,13 @@ const Prices = () => (
               <CheckCircle size={18} /> Покраска стен и потолков
             </li>
             <li>
-              <CheckCircle size={18} /> Укладка ламината/линолеума
-            </li>
-            <li>
-              <CheckCircle size={18} /> Установка дверей
-            </li>
-            <li>
-              <CheckCircle size={18} /> Монтаж плинтусов
-            </li>
-            <li>
-              <CheckCircle size={18} /> Установка светильников
+              <CheckCircle size={18} /> Укладка ламината
             </li>
           </ul>
           <Link to="/kontakty" className="btn btn-outline">
             Выбрать
           </Link>
         </motion.div>
-
         <motion.div
           variants={staggerChild}
           className="pricing-card-modern featured"
@@ -894,7 +583,6 @@ const Prices = () => (
           <div className="pricing-header">
             <h3>Комфорт</h3>
             <div className="pricing-price">от 12 000 ₽/м²</div>
-            <p>Оптимальное соотношение цены и качества</p>
           </div>
           <ul className="pricing-features">
             <li>
@@ -904,31 +592,17 @@ const Prices = () => (
               <CheckCircle size={18} /> Замена электрики
             </li>
             <li>
-              <CheckCircle size={18} /> Замена сантехники
-            </li>
-            <li>
-              <CheckCircle size={18} /> Выравнивание стен
-            </li>
-            <li>
               <CheckCircle size={18} /> Укладка плитки
-            </li>
-            <li>
-              <CheckCircle size={18} /> Натяжные потолки
-            </li>
-            <li>
-              <CheckCircle size={18} /> Теплый пол в ванной
             </li>
           </ul>
           <Link to="/kontakty" className="btn btn-primary">
             Выбрать
           </Link>
         </motion.div>
-
         <motion.div variants={staggerChild} className="pricing-card-modern">
           <div className="pricing-header">
             <h3>Премиум</h3>
             <div className="pricing-price">от 20 000 ₽/м²</div>
-            <p>Ремонт высокого класса с индивидуальным подходом</p>
           </div>
           <ul className="pricing-features">
             <li>
@@ -940,88 +614,10 @@ const Prices = () => (
             <li>
               <CheckCircle size={18} /> Авторский надзор
             </li>
-            <li>
-              <CheckCircle size={18} /> Премиум материалы
-            </li>
-            <li>
-              <CheckCircle size={18} /> Сложные конструкции
-            </li>
-            <li>
-              <CheckCircle size={18} /> Умный дом
-            </li>
-            <li>
-              <CheckCircle size={18} /> Комплектация мебелью
-            </li>
           </ul>
           <Link to="/kontakty" className="btn btn-outline">
             Выбрать
           </Link>
-        </motion.div>
-      </motion.div>
-
-      <motion.div
-        className="pricing-additional-modern"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, ease }}
-      >
-        <h2>Дополнительные услуги</h2>
-        <motion.div
-          className="additional-grid-modern"
-          variants={staggerContainer}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-        >
-          <motion.div
-            variants={staggerChild}
-            className="additional-item-modern"
-          >
-            <div className="additional-icon">
-              <Palette size={24} />
-            </div>
-            <div>
-              <span>Дизайн-проект</span>
-              <strong>от 2 000 ₽/м²</strong>
-            </div>
-          </motion.div>
-          <motion.div
-            variants={staggerChild}
-            className="additional-item-modern"
-          >
-            <div className="additional-icon">
-              <Ruler size={24} />
-            </div>
-            <div>
-              <span>3D визуализация</span>
-              <strong>от 500 ₽/м²</strong>
-            </div>
-          </motion.div>
-          <motion.div
-            variants={staggerChild}
-            className="additional-item-modern"
-          >
-            <div className="additional-icon">
-              <Users size={24} />
-            </div>
-            <div>
-              <span>Авторский надзор</span>
-              <strong>от 30 000 ₽/мес</strong>
-            </div>
-          </motion.div>
-          <motion.div
-            variants={staggerChild}
-            className="additional-item-modern"
-          >
-            <div className="additional-icon">
-              <Truck size={24} />
-            </div>
-            <div>
-              <span>Комплектация материалами</span>
-              <strong>5% от стоимости</strong>
-            </div>
-          </motion.div>
         </motion.div>
       </motion.div>
     </div>
@@ -1036,7 +632,6 @@ const About = () => (
         <h1 className="page-title">PerfStroy</h1>
         <p className="page-subtitle">Работаем с 2014 года</p>
       </div>
-
       <div className="about-content-modern">
         <motion.div
           className="about-text-modern"
@@ -1047,29 +642,22 @@ const About = () => (
         >
           <h3>Мы создаем пространства для комфортной жизни</h3>
           <p>
-            PerfStroy — это команда профессионалов с многолетним опытом в сфере
-            ремонта и строительства. За 10 лет работы мы реализовали более 500
-            проектов различной сложности.
+            PerfStroy — это команда профессионалов с многолетним опытом. За 10
+            лет мы реализовали более 500 проектов.
           </p>
-          <p>
-            Наш подход основан на трех принципах: качество, прозрачность и
-            соблюдение сроков. Мы используем только сертифицированные материалы
-            от проверенных производителей.
-          </p>
-
           <div className="about-features-modern">
             <div className="about-feature">
               <Wrench size={24} />
               <div>
                 <h4>Собственные бригады</h4>
-                <p>Все мастера в штате, не привлекаем случайных рабочих</p>
+                <p>Все мастера в штате</p>
               </div>
             </div>
             <div className="about-feature">
               <Shield size={24} />
               <div>
                 <h4>Гарантия качества</h4>
-                <p>До 5 лет гарантии по договору на все виды работ</p>
+                <p>До 5 лет по договору</p>
               </div>
             </div>
           </div>
@@ -1088,77 +676,6 @@ const About = () => (
           />
         </motion.div>
       </div>
-
-      <motion.div
-        className="about-stats-modern"
-        variants={staggerContainer}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true }}
-      >
-        <motion.div variants={staggerChild} className="stat-card-modern">
-          <span className="stat-number-modern">500+</span>
-          <span className="stat-label-modern">Реализованных проектов</span>
-        </motion.div>
-        <motion.div variants={staggerChild} className="stat-card-modern">
-          <span className="stat-number-modern">10</span>
-          <span className="stat-label-modern">Лет на рынке</span>
-        </motion.div>
-        <motion.div variants={staggerChild} className="stat-card-modern">
-          <span className="stat-number-modern">50+</span>
-          <span className="stat-label-modern">Специалистов в штате</span>
-        </motion.div>
-        <motion.div variants={staggerChild} className="stat-card-modern">
-          <span className="stat-number-modern">98%</span>
-          <span className="stat-label-modern">Довольных клиентов</span>
-        </motion.div>
-      </motion.div>
-
-      <motion.div
-        className="about-values-modern"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, ease }}
-      >
-        <h2>Наши ценности</h2>
-        <motion.div
-          className="values-grid-modern"
-          variants={staggerContainer}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-        >
-          <motion.div variants={staggerChild} className="value-card-modern">
-            <div className="value-icon-modern">
-              <Shield size={32} />
-            </div>
-            <h4>Качество</h4>
-            <p>Используем только проверенные материалы и технологии</p>
-          </motion.div>
-          <motion.div variants={staggerChild} className="value-card-modern">
-            <div className="value-icon-modern">
-              <Clock size={32} />
-            </div>
-            <h4>Пунктуальность</h4>
-            <p>Сдаем объекты точно в срок, прописанный в договоре</p>
-          </motion.div>
-          <motion.div variants={staggerChild} className="value-card-modern">
-            <div className="value-icon-modern">
-              <TrendingUp size={32} />
-            </div>
-            <h4>Прозрачность</h4>
-            <p>Фиксированная смета без скрытых платежей</p>
-          </motion.div>
-          <motion.div variants={staggerChild} className="value-card-modern">
-            <div className="value-icon-modern">
-              <Users size={32} />
-            </div>
-            <h4>Забота</h4>
-            <p>Внимательное отношение к каждому клиенту</p>
-          </motion.div>
-        </motion.div>
-      </motion.div>
     </div>
   </motion.div>
 );
@@ -1203,18 +720,9 @@ const Contact = () => {
         >
           <span className="section-tag">Контакты</span>
           <h2>Обсудим ваш проект</h2>
-          <p>
-            Заполните анкету, и мы подготовим бесплатную консультацию и расчет
-            стоимости в течение 24 часов.
-          </p>
-
-          <motion.div
-            className="contact-details-modern"
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-          >
-            <motion.div variants={staggerChild} className="contact-item-modern">
+          <p>Заполните анкету, и мы подготовим бесплатную консультацию.</p>
+          <div className="contact-details-modern">
+            <div className="contact-item-modern">
               <div className="contact-icon-modern">
                 <Phone size={24} />
               </div>
@@ -1222,8 +730,8 @@ const Contact = () => {
                 <div className="contact-label">Телефон</div>
                 <div className="contact-value">+7 (999) 123-45-67</div>
               </div>
-            </motion.div>
-            <motion.div variants={staggerChild} className="contact-item-modern">
+            </div>
+            <div className="contact-item-modern">
               <div className="contact-icon-modern">
                 <Mail size={24} />
               </div>
@@ -1231,49 +739,8 @@ const Contact = () => {
                 <div className="contact-label">Email</div>
                 <div className="contact-value">info@perfstroy.ru</div>
               </div>
-            </motion.div>
-            <motion.div variants={staggerChild} className="contact-item-modern">
-              <div className="contact-icon-modern">
-                <MapPin size={24} />
-              </div>
-              <div>
-                <div className="contact-label">Адрес офиса</div>
-                <div className="contact-value">Москва, ул. Строителей, 10</div>
-              </div>
-            </motion.div>
-            <motion.div variants={staggerChild} className="contact-item-modern">
-              <div className="contact-icon-modern">
-                <Clock size={24} />
-              </div>
-              <div>
-                <div className="contact-label">Режим работы</div>
-                <div className="contact-value">Пн-Пт: 9:00 - 20:00</div>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            className="contact-advantages-modern"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease, delay: 0.3 }}
-          >
-            <h3>Почему стоит оставить заявку сейчас?</h3>
-            <ul>
-              <li>
-                <CheckCircle size={18} /> Бесплатный выезд замерщика
-              </li>
-              <li>
-                <CheckCircle size={18} /> Точный расчет стоимости
-              </li>
-              <li>
-                <CheckCircle size={18} /> Помощь в выборе материалов
-              </li>
-              <li>
-                <CheckCircle size={18} /> Рассрочка 0% на 6 месяцев
-              </li>
-            </ul>
-          </motion.div>
+            </div>
+          </div>
         </motion.div>
 
         <motion.form
@@ -1284,7 +751,6 @@ const Contact = () => {
           transition={{ duration: 0.6, ease, delay: 0.1 }}
         >
           <h3>Анкета клиента</h3>
-
           <div className="form-row">
             <div className="input-group">
               <label>Ваше имя *</label>
@@ -1311,20 +777,7 @@ const Contact = () => {
               />
             </div>
           </div>
-
           <div className="form-row">
-            <div className="input-group">
-              <label>Email</label>
-              <input
-                type="email"
-                className="input"
-                placeholder="example@mail.ru"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
-            </div>
             <div className="input-group">
               <label>Тип объекта *</label>
               <select
@@ -1337,54 +790,30 @@ const Contact = () => {
               >
                 <option>Квартира</option>
                 <option>Загородный дом</option>
-                <option>Офис / Коммерция</option>
-                <option>Другое</option>
+                <option>Офис</option>
               </select>
             </div>
-          </div>
-
-          <div className="form-row">
             <div className="input-group">
-              <label>Примерная площадь (м²)</label>
+              <label>Площадь (м²)</label>
               <input
                 type="number"
                 className="input"
-                placeholder="Например, 85"
+                placeholder="85"
                 value={formData.area}
                 onChange={(e) =>
                   setFormData({ ...formData, area: e.target.value })
                 }
               />
             </div>
-            <div className="input-group">
-              <label>Планируемый бюджет</label>
-              <select
-                className="select"
-                value={formData.budget}
-                onChange={(e) =>
-                  setFormData({ ...formData, budget: e.target.value })
-                }
-              >
-                <option>До 500 тыс. ₽</option>
-                <option>500 тыс. - 1 млн ₽</option>
-                <option>1 - 3 млн ₽</option>
-                <option>3 - 5 млн ₽</option>
-                <option>Более 5 млн ₽</option>
-                <option>Пока не определился</option>
-              </select>
-            </div>
           </div>
-
           <div className="input-group">
-            <label>Необходимые виды работ</label>
+            <label>Виды работ</label>
             <div className="checkbox-group">
               {[
                 "Дизайн-проект",
                 "Черновая отделка",
                 "Чистовая отделка",
-                "Ремонт под ключ",
-                "Замена коммуникаций",
-                "Укладка плитки",
+                "Под ключ",
               ].map((type) => (
                 <label key={type} className="checkbox-label">
                   <input
@@ -1401,25 +830,20 @@ const Contact = () => {
               ))}
             </div>
           </div>
-
           <div className="input-group">
-            <label>Комментарий или пожелания</label>
+            <label>Комментарий</label>
             <textarea
               className="textarea"
-              placeholder="Опишите вашу задачу..."
+              placeholder="Опишите задачу..."
               value={formData.comment}
               onChange={(e) =>
                 setFormData({ ...formData, comment: e.target.value })
               }
             ></textarea>
           </div>
-
           <button type="submit" className="btn btn-primary btn-full">
             Отправить заявку
           </button>
-          <p className="form-note">
-            Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
-          </p>
         </motion.form>
       </div>
     </motion.div>
@@ -1427,9 +851,9 @@ const Contact = () => {
 };
 
 // --- ГЛАВНЫЙ КОМПОНЕНТ ---
-
 function App() {
   return (
+    // HashRouter решает все проблемы с путями на GitHub Pages
     <Router>
       <div className="app-wrapper">
         <Navbar />

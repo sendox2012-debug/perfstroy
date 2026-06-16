@@ -1480,3 +1480,36 @@ textarea:focus-visible {
     outline: 2px solid var(--accent-primary);
     outline-offset: 3px;
 }
+/* === MOBILE UX FIXES === */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+/* Разрешаем выделение только в input/textarea */
+input,
+textarea,
+select {
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    touch-action: auto;
+}
+
+/* Запрещаем зум на iOS */
+@supports (-webkit-touch-callout: none) {
+    .navbar,
+    .btn,
+    a,
+    button {
+        transform: translateZ(0);
+    }
+}

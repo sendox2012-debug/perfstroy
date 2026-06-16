@@ -24,73 +24,42 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Валидация обязательных полей
+    // Валидация
     if (!formData.name.trim() || !formData.phone.trim()) {
       alert("Пожалуйста, заполните обязательные поля (Имя и Телефон)");
       setIsSubmitting(false);
       return;
     }
 
-    // Валидация телефона
-    const phoneRegex = /^[\d\s\-\+\(\)]{10,}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      alert("Пожалуйста, введите корректный номер телефона");
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
-      // Добавляем метаданные
+      // Минимальные данные для экономии места
       const dataWithMeta = {
-        ...formData,
-        timestamp: new Date().toISOString(),
-        source: "perfstroy.ru",
-        userAgent: navigator.userAgent,
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        email: formData.email.trim(),
+        serviceType: formData.serviceType,
+        area: formData.area.trim(),
+        comment: formData.comment.trim().substring(0, 100), // Обрезаем комментарий
       };
 
-      // Кодируем данные в короткую строку
-      const code = await encodeTelegramData(dataWithMeta);
+      // Кодируем данные
+      const code = encodeTelegramData(dataWithMeta);
 
       if (!code) {
         throw new Error("Не удалось сформировать код заявки");
       }
 
-      // Формируем ссылку на бота
+      console.log("Generated code:", code); // Для отладки
+      console.log("Code length:", code.length); // Для отладки
+
+      // Формируем ссылку
       const telegramLink = `${TELEGRAM_BOT_URL}?start=${code}`;
 
-      // Открываем Telegram в новой вкладке
-      const newWindow = window.open(telegramLink, "_blank");
+      // Открываем Telegram
+      window.location.href = telegramLink;
 
-      // Если браузер заблокировал popup
-      if (
-        !newWindow ||
-        newWindow.closed ||
-        typeof newWindow.closed === "undefined"
-      ) {
-        // Показываем ссылку вручную
-        const confirmed = confirm(
-          "Браузер заблокировал открытие Telegram.\n\n" +
-            'Нажмите "OK", чтобы скопировать ссылку в буфер обмена.',
-        );
-
-        if (confirmed) {
-          await navigator.clipboard.writeText(telegramLink);
-          alert(
-            "✅ Ссылка скопирована!\n\nОткройте Telegram и вставьте ссылку в любой чат, затем перейдите по ней.",
-          );
-        }
-      }
-
-      // Успешное уведомление
+      // Очищаем форму
       setTimeout(() => {
-        alert(
-          "✅ Заявка сформирована!\n\n" +
-            "Откройте Telegram и отправьте боту команду /start.\n" +
-            "Заявка автоматически будет отправлена нашим менеджерам.",
-        );
-        setIsSubmitting(false);
-
-        // Очищаем форму
         setFormData({
           name: "",
           phone: "",
@@ -99,12 +68,11 @@ export default function Contact() {
           area: "",
           comment: "",
         });
-      }, 500);
+        setIsSubmitting(false);
+      }, 1000);
     } catch (error) {
-      console.error("Ошибка отправки заявки:", error);
-      alert(
-        "❌ Произошла ошибка при формировании заявки.\n\nПопробуйте ещё раз или свяжитесь с нами по телефону.",
-      );
+      console.error("Ошибка:", error);
+      alert("❌ Ошибка при формировании заявки. Попробуйте ещё раз.");
       setIsSubmitting(false);
     }
   };

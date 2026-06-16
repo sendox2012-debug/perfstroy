@@ -1,23 +1,27 @@
-export const encodeTelegramData = async (data) => {
+/**
+ * Компактное кодирование данных для Telegram
+ * Простой base64 без сжатия (для коротких строк это оптимально)
+ */
+export const encodeTelegramData = (data) => {
   try {
-    // 1. Преобразуем объект в JSON строку
-    const json = JSON.stringify(data);
+    // Оставляем только essential поля
+    const compactData = {
+      n: data.name || "",
+      p: data.phone || "",
+      e: data.email || "",
+      s: data.serviceType || "",
+      a: data.area || "",
+      c: (data.comment || "").substring(0, 100),
+      t: Date.now(),
+    };
 
-    // 2. Сжимаем через встроенный Compression Streams API
-    const stream = new Blob([json]).stream();
-    const compressedStream = stream.pipeThrough(new CompressionStream("gzip"));
-    const compressedBlob = await new Response(compressedStream).blob();
-    const compressedBuffer = await compressedBlob.arrayBuffer();
+    // Компактный JSON без пробелов
+    const json = JSON.stringify(compactData);
 
-    // 3. Кодируем в base64
-    const bytes = new Uint8Array(compressedBuffer);
-    let binary = "";
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    const base64 = btoa(binary);
+    // Простой base64 encoding
+    const base64 = btoa(unescape(encodeURIComponent(json)));
 
-    // 4. Делаем URL-safe
+    // URL-safe encoding
     const urlSafe = base64
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
@@ -30,5 +34,5 @@ export const encodeTelegramData = async (data) => {
   }
 };
 
-// Ссылка на бота (замени на своего)
+// Ссылка на бота
 export const TELEGRAM_BOT_URL = "https://t.me/Perfstroybot";

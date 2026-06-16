@@ -1,227 +1,99 @@
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { TrendingUp, Clock, CheckCircle } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { TrendingUp, Clock, Images } from "lucide-react";
 import { SectionHeader } from "../components/ui/SectionHeader";
-import { LinkButton } from "../components/ui/Button";
-import { fadeUp, easeOutExpo } from "../utils/animations";
+import { GalleryModal } from "../components/GalleryModal";
+import { portfolioProjects } from "../data/portfolio";
+import {
+  staggerContainer,
+  staggerChild,
+  easeOutExpo,
+} from "../utils/animations";
 
-export default function Services() {
-  const services = [
-    {
-      title: "Кровельные работы",
-      price: "от 1500 ₽/м²",
-      time: "от 3 дней",
-      image:
-        "https://images.unsplash.com/photo-1632759145351-1cfb8038c567?w=800&q=80",
-      features: [
-        "Металлочерепица",
-        "Мягкая кровля",
-        "Профнастил",
-        "Ремонт кровли",
-        "Водостоки",
-        "Утепление",
-      ],
-    },
-    {
-      title: "Фасадные работы",
-      price: "от 1 500 ₽/м²",
-      time: "от 5 дней",
-      image:
-        "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80",
-      features: [
-        "Сайдинг",
-        "Штукатурка",
-        "Утепление",
-        "Блок-хаус",
-        "Цокольный сайдинг",
-        "Покраска",
-      ],
-    },
-    {
-      title: "Пристройки",
-      price: "от 20 000 ₽/м²",
-      time: "от 2 недель",
-      image:
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
-      features: [
-        "Каркасные",
-        "Из бруса",
-        "Из пеноблока",
-        "Фундамент",
-        "Крыша",
-        "Под ключ",
-      ],
-    },
-    {
-      title: "Веранды",
-      price: "от 12 000 ₽/м²",
-      time: "от 10 дней",
-      image:
-        "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=800&q=80",
-      features: [
-        "Открытые",
-        "Закрытые",
-        "С остеклением",
-        "Теплые",
-        "Поликарбонат",
-        "Деревянные",
-      ],
-    },
-    {
-      title: "Террасы",
-      price: "от 8 000 ₽/м²",
-      time: "от 7 дней",
-      image:
-        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80",
-      features: [
-        "Деревянные",
-        "Из ДПК",
-        "На сваях",
-        "Террасная доска",
-        "Перила",
-        "Крытые",
-      ],
-    },
-    {
-      title: "Беседки",
-      price: "от 50 000 ₽",
-      time: "от 5 дней",
-      image:
-        "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80",
-      features: [
-        "Деревянные",
-        "Металлические",
-        "С мангалом",
-        "Шестигранные",
-        "Прямоугольные",
-        "Под ключ",
-      ],
-    },
-  ];
+export default function Portfolio() {
+  const [selectedProject, setSelectedProject] = useState(null);
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={{
-        initial: { opacity: 0, y: 16 },
-        animate: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.6, ease: easeOutExpo },
-        },
-        exit: { opacity: 0, y: -8, transition: { duration: 0.3 } },
-      }}
-      className="page"
-    >
-      <div className="container">
-        <div className="section-header" style={{ paddingTop: "40px" }}>
-          <motion.span className="section-tag" {...fadeUp}>
-            Услуги
-          </motion.span>
-          <motion.h1
-            className="section-title"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1, ease: easeOutExpo }}
-          >
-            Наши услуги
-          </motion.h1>
-          <motion.p
-            className="section-subtitle"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
-            Кровля, фасады и строительство
-          </motion.p>
-        </div>
-        <div
-          className="services-grid"
-          style={{ maxWidth: "1000px", margin: "0 auto" }}
-        >
-          {services.map((service, idx) => (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.6, ease: easeOutExpo }}
+        className="page"
+      >
+        <div className="portfolio-section">
+          <div className="container">
+            <SectionHeader
+              tag="Портфолио"
+              title="Наши работы"
+              subtitle="Более 300 успешно выполненных проектов"
+            />
+
             <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              className="portfolio-grid"
+              variants={staggerContainer}
+              initial="initial"
+              whileInView="animate"
               viewport={{ once: true, margin: "-80px" }}
-              transition={{
-                duration: 0.7,
-                delay: idx * 0.05,
-                ease: easeOutExpo,
-              }}
-              className="service-card"
             >
-              <div className="service-image">
-                <img src={service.image} alt={service.title} loading="lazy" />
-              </div>
-              <div className="service-content">
-                <h3>{service.title}</h3>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "16px",
-                    marginBottom: "20px",
-                    flexWrap: "wrap",
-                  }}
+              {portfolioProjects.map((project) => (
+                <motion.div
+                  key={project.id}
+                  variants={staggerChild}
+                  className="portfolio-card"
                 >
-                  <span
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      fontSize: "14px",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    <TrendingUp size={14} /> {service.price}
-                  </span>
-                  <span
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      fontSize: "14px",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
-                    <Clock size={14} /> {service.time}
-                  </span>
-                </div>
-                <ul style={{ listStyle: "none", marginBottom: "24px" }}>
-                  {service.features.map((f, i) => (
-                    <li
-                      key={i}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        marginBottom: "10px",
-                        color: "var(--text-secondary)",
-                        fontSize: "15px",
+                  <div className="portfolio-gallery">
+                    <img
+                      src={project.mainImage}
+                      alt={project.title}
+                      className="portfolio-gallery-main"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.src =
+                          'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"%3E%3Crect fill="%231a1a1a" width="400" height="300"/%3E%3Ctext fill="%23666" font-family="sans-serif" font-size="16" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EФото не найдено%3C/text%3E%3C/svg%3E';
                       }}
+                    />
+                    <div className="portfolio-gallery-count">
+                      <Images size={14} />
+                      <span>{project.images.length} фото</span>
+                    </div>
+                  </div>
+                  <div className="portfolio-content">
+                    <h3>{project.title}</h3>
+                    <p>{project.description}</p>
+                    <div className="portfolio-meta">
+                      <div className="portfolio-meta-item">
+                        <TrendingUp size={14} />
+                        <span>{project.area}</span>
+                      </div>
+                      <div className="portfolio-meta-item">
+                        <Clock size={14} />
+                        <span>{project.duration}</span>
+                      </div>
+                    </div>
+                    <button
+                      className="portfolio-view-btn"
+                      onClick={() => setSelectedProject(project)}
                     >
-                      <CheckCircle
-                        size={16}
-                        style={{
-                          color: "var(--accent-primary)",
-                          flexShrink: 0,
-                        }}
-                      />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <LinkButton to="/kontakty" variant="primary" fullWidth>
-                  Рассчитать стоимость
-                </LinkButton>
-              </div>
+                      Смотреть все фото
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+
+      <AnimatePresence>
+        {selectedProject && (
+          <GalleryModal
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }

@@ -1,25 +1,29 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 
 export const AnimatedCounter = ({ value, suffix = "" }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const numericValue = parseInt(value.replace(/\D/g, ""));
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const [count, setCount] = useState(0);
+  const numericValue = parseInt(value.replace(/\D/g, ""), 10);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || hasAnimated.current) return;
 
+    hasAnimated.current = true;
     let startTime;
     const duration = 2000;
 
     const animate = (timestamp) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
 
-      if (ref.current) {
-        ref.current.textContent = `${Math.floor(eased * numericValue)}${suffix}`;
-      }
+      // Easing function (easeOutQuart)
+      const eased = 1 - Math.pow(1 - progress, 4);
+      const currentCount = Math.floor(eased * numericValue);
+
+      setCount(currentCount);
 
       if (progress < 1) {
         requestAnimationFrame(animate);
@@ -27,7 +31,12 @@ export const AnimatedCounter = ({ value, suffix = "" }) => {
     };
 
     requestAnimationFrame(animate);
-  }, [isInView, numericValue, suffix]);
+  }, [isInView, numericValue]);
 
-  return <span ref={ref}>0{suffix}</span>;
+  return (
+    <span ref={ref} style={{ fontVariantNumeric: "tabular-nums" }}>
+      {count}
+      {suffix}
+    </span>
+  );
 };

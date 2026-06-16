@@ -9,7 +9,7 @@ export default function Services() {
   const services = [
     {
       title: "Кровельные работы",
-      price: "от 800 ₽/м²",
+      price: "от 1500 ₽/м²",
       time: "от 3 дней",
       image:
         "https://images.unsplash.com/photo-1632759145351-1cfb8038c567?w=800&q=80",
@@ -39,7 +39,7 @@ export default function Services() {
     },
     {
       title: "Пристройки",
-      price: "от 15 000 ₽/м²",
+      price: "от 20 000 ₽/м²",
       time: "от 2 недель",
       image:
         "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",

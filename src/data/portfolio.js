@@ -28,27 +28,30 @@ export const portfolioProjects = [
     title: "Строительство зимнего сада",
     description:
       "Зимний сад с алюминиевым профилем и энергосберегающими стеклопакетами",
-    mainImage: "assets/IMG-20260615-WA0007.jpg",
+    mainImage: "assets/IMG-20260615-WA0012.jpg",
     images: [
-      "assets/IMG-20260615-WA0008.jpg",
-      "assets/IMG-20260615-WA0009.jpg",
-      "assets/IMG-20260615-WA0010.jpg",
-      "assets/IMG-20260615-WA0011.jpg",
       "assets/IMG-20260615-WA0012.jpg",
       "assets/IMG-20260615-WA0013.jpg",
       "assets/IMG-20260615-WA0014.jpg",
-      
+      "assets/IMG-20260615-WA0016.jpg",
+      "assets/IMG-20260615-WA0017.jpg",
+      "assets/IMG-20260615-WA0018.jpg",
+      "assets/IMG-20260615-WA0019.jpg",
     ],
   },
   {
     id: 4,
-    title: "Замена кровли",
+    title: "Кровельные паботы",
     description: "Полная замена кровли с устройством новой стропильной системы",
     mainImage: "assets/motion_photo_1060605890286035261.jpg",
     images: [
       "assets/motion_photo_1060605890286035261.jpg",
       "assets/motion_photo_5213346531113059468.jpg",
       "assets/motion_photo_9041022196534726586.jpg",
+      "assets/IMG-20260615-WA0008.jpg",
+      "assets/IMG-20260615-WA0009.jpg",
+      "assets/IMG-20260615-WA0010.jpg",
+      "assets/IMG-20260615-WA0011.jpg",
     ],
   },
 ];

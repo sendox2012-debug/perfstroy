@@ -1,38 +1,53 @@
-/**
- * Компактное кодирование данных для Telegram
- * Простой base64 без сжатия (для коротких строк это оптимально)
- */
-export const encodeTelegramData = (data) => {
+const SERVICE_CODES = {
+  Кровля: "krov",
+  Фасад: "fas",
+  Замена: "zam",
+  "Под ключ": "key",
+  Пристройка: "prist",
+  Веранда: "ver",
+  Терраса: "terr",
+  Беседка: "bes",
+  "Кровельные работы": "krov",
+  "Фасадные работы": "fas",
+  "Замена покрытия": "zam",
+  "Кровля под ключ": "key",
+};
+
+function stringToHex(str) {
+  const utf8 = unescape(encodeURIComponent(str));
+  let hex = "";
+  for (let i = 0; i < utf8.length; i++) {
+    hex += utf8.charCodeAt(i).toString(16).padStart(2, "0");
+  }
+  return hex;
+}
+
+export const createOrderLink = (data) => {
   try {
-    // Оставляем только essential поля
-    const compactData = {
-      n: data.name || "",
-      p: data.phone || "",
-      e: data.email || "",
-      s: data.serviceType || "",
-      a: data.area || "",
-      c: (data.comment || "").substring(0, 100),
-      t: Date.now(),
-    };
+    const name = (data.name || "").substring(0, 6).trim();
+    const phone = (data.phone || "")
+      .replace(/[\s\-\+\(\)]/g, "")
+      .substring(0, 11);
+    const service = SERVICE_CODES[data.serviceType] || "other";
 
-    // Компактный JSON без пробелов
-    const json = JSON.stringify(compactData);
+    const dataString = `${name}|${phone}|${service}`;
+    const hexData = stringToHex(dataString);
 
-    // Простой base64 encoding
-    const base64 = btoa(unescape(encodeURIComponent(json)));
+    console.log("Строка:", dataString);
+    console.log("HEX:", hexData);
+    console.log("Длина:", hexData.length);
 
-    // URL-safe encoding
-    const urlSafe = base64
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/, "");
+    if (hexData.length > 64) {
+      console.error("Превышен лимит:", hexData.length);
+      return null;
+    }
 
-    return urlSafe;
+    const botUsername = "Perfstroybot";
+    return `https://t.me/${botUsername}?start=${hexData}`;
   } catch (error) {
-    console.error("Ошибка кодирования:", error);
+    console.error("Ошибка:", error);
     return null;
   }
 };
 
-// Ссылка на бота
 export const TELEGRAM_BOT_URL = "https://t.me/Perfstroybot";

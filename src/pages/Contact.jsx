@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Phone, Mail, MapPin, Clock, CheckCircle, Send } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  CheckCircle,
+  MessageCircle,
+} from "lucide-react";
 import { Button } from "../components/ui/Button";
-import { encodeTelegramData, TELEGRAM_BOT_URL } from "../utils/telegram";
+import { createOrderLink, TELEGRAM_BOT_URL } from "../utils/telegram";
 import {
   staggerContainer,
   staggerChild,
@@ -14,67 +21,66 @@ export default function Contact() {
     name: "",
     phone: "",
     email: "",
-    serviceType: "Кровельные работы",
+    serviceType: "Кровля",
     area: "",
-    comment: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Валидация
-    if (!formData.name.trim() || !formData.phone.trim()) {
-      alert("Пожалуйста, заполните обязательные поля (Имя и Телефон)");
+    const name = formData.name.trim();
+    const phone = formData.phone.trim();
+
+    if (!name || !phone) {
+      alert("⚠️ Пожалуйста, введите имя и номер телефона");
       setIsSubmitting(false);
       return;
     }
 
+    const telegramLink = createOrderLink(formData);
+
+    if (!telegramLink) {
+      alert("❌ Данные слишком длинные. Сократите имя (макс. 6 символов).");
+      setIsSubmitting(false);
+      return;
+    }
+
+    console.log("✅ Ссылка:", telegramLink);
+
     try {
-      // Минимальные данные для экономии места
-      const dataWithMeta = {
-        name: formData.name.trim(),
-        phone: formData.phone.trim(),
-        email: formData.email.trim(),
-        serviceType: formData.serviceType,
-        area: formData.area.trim(),
-        comment: formData.comment.trim().substring(0, 100), // Обрезаем комментарий
-      };
-
-      // Кодируем данные
-      const code = encodeTelegramData(dataWithMeta);
-
-      if (!code) {
-        throw new Error("Не удалось сформировать код заявки");
-      }
-
-      console.log("Generated code:", code); // Для отладки
-      console.log("Code length:", code.length); // Для отладки
-
-      // Формируем ссылку
-      const telegramLink = `${TELEGRAM_BOT_URL}?start=${code}`;
-
-      // Открываем Telegram
       window.location.href = telegramLink;
-
-      // Очищаем форму
       setTimeout(() => {
-        setFormData({
-          name: "",
-          phone: "",
-          email: "",
-          serviceType: "Кровельные работы",
-          area: "",
-          comment: "",
-        });
-        setIsSubmitting(false);
-      }, 1000);
+        window.open(telegramLink, "_blank");
+      }, 100);
     } catch (error) {
       console.error("Ошибка:", error);
-      alert("❌ Ошибка при формировании заявки. Попробуйте ещё раз.");
-      setIsSubmitting(false);
+      const confirmed = confirm(
+        "Не удалось открыть Telegram.\n\nНажмите OK, чтобы скопировать ссылку.",
+      );
+      if (confirmed) {
+        navigator.clipboard.writeText(telegramLink);
+        alert("✅ Ссылка скопирована!");
+      }
     }
+
+    setTimeout(() => {
+      alert(
+        "✅ Заявка сформирована!\n\n" +
+          "Бот автоматически отправит её менеджерам.\n\n" +
+          "💬 Если нужно добавить комментарий — напишите боту в Telegram.",
+      );
+      setIsSubmitting(false);
+
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        serviceType: "Кровля",
+        area: "",
+      });
+    }, 500);
   };
 
   const handleChange = (field, value) => {
@@ -101,8 +107,8 @@ export default function Contact() {
             <span className="section-tag">Контакты</span>
             <h2>Бесплатный замер</h2>
             <p>
-              Заполните форму, и вы автоматически перейдёте в наш Telegram-бот
-              для подтверждения заявки. Это быстро и удобно!
+              Заполните форму — вы автоматически перейдёте в наш Telegram-бот
+              для отправки заявки менеджерам.
             </p>
 
             <motion.div
@@ -163,20 +169,19 @@ export default function Contact() {
               <h3>Как это работает?</h3>
               <ul>
                 <li>
-                  <CheckCircle size={16} />
+                  <CheckCircle size={16} />{" "}
                   <span>Заполните форму на сайте</span>
                 </li>
                 <li>
-                  <CheckCircle size={16} />
-                  <span>Автоматически откроется Telegram-бот</span>
+                  <CheckCircle size={16} /> <span>Откроется Telegram-бот</span>
                 </li>
                 <li>
-                  <CheckCircle size={16} />
-                  <span>Заявка придёт нашим менеджерам</span>
+                  <CheckCircle size={16} />{" "}
+                  <span>Заявка придёт менеджерам</span>
                 </li>
                 <li>
-                  <CheckCircle size={16} />
-                  <span>Мы свяжемся с вами в течение 24 часов</span>
+                  <CheckCircle size={16} />{" "}
+                  <span>Свяжемся в течение 24 часов</span>
                 </li>
               </ul>
             </motion.div>
@@ -199,11 +204,21 @@ export default function Contact() {
                   id="name"
                   required
                   className="input"
-                  placeholder="Иван Иванов"
+                  placeholder="Иван"
                   value={formData.name}
                   onChange={(e) => handleChange("name", e.target.value)}
+                  maxLength={6}
                   disabled={isSubmitting}
                 />
+                <p
+                  style={{
+                    fontSize: "11px",
+                    color: "var(--text-tertiary)",
+                    marginTop: "4px",
+                  }}
+                >
+                  Макс. 6 символов
+                </p>
               </div>
               <div className="input-group">
                 <label htmlFor="phone">Телефон *</label>
@@ -211,27 +226,25 @@ export default function Contact() {
                   id="phone"
                   required
                   className="input"
-                  placeholder="+7 (___) ___-__-__"
+                  placeholder="79991234567"
                   value={formData.phone}
                   onChange={(e) => handleChange("phone", e.target.value)}
+                  maxLength={15}
                   disabled={isSubmitting}
                 />
+                <p
+                  style={{
+                    fontSize: "11px",
+                    color: "var(--text-tertiary)",
+                    marginTop: "4px",
+                  }}
+                >
+                  Без + и пробелов
+                </p>
               </div>
             </div>
 
             <div className="form-row">
-              <div className="input-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  type="email"
-                  className="input"
-                  placeholder="example@mail.ru"
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  disabled={isSubmitting}
-                />
-              </div>
               <div className="input-group">
                 <label htmlFor="serviceType">Тип работ *</label>
                 <select
@@ -242,41 +255,28 @@ export default function Contact() {
                   onChange={(e) => handleChange("serviceType", e.target.value)}
                   disabled={isSubmitting}
                 >
-                  <option>Кровельные работы</option>
-                  <option>Фасадные работы</option>
-                  <option>Замена покрытия</option>
-                  <option>Кровля под ключ</option>
+                  <option>Кровля</option>
+                  <option>Фасад</option>
+                  <option>Замена</option>
+                  <option>Под ключ</option>
                   <option>Пристройка</option>
                   <option>Веранда</option>
                   <option>Терраса</option>
                   <option>Беседка</option>
                 </select>
               </div>
-            </div>
-
-            <div className="input-group">
-              <label htmlFor="area">Площадь / размер</label>
-              <input
-                id="area"
-                className="input"
-                placeholder="100 м² или 3x4 м"
-                value={formData.area}
-                onChange={(e) => handleChange("area", e.target.value)}
-                disabled={isSubmitting}
-              />
-            </div>
-
-            <div className="input-group">
-              <label htmlFor="comment">Комментарий</label>
-              <textarea
-                id="comment"
-                className="textarea"
-                placeholder="Опишите вашу задачу, пожелания или вопросы..."
-                value={formData.comment}
-                onChange={(e) => handleChange("comment", e.target.value)}
-                disabled={isSubmitting}
-                maxLength={500}
-              ></textarea>
+              <div className="input-group">
+                <label htmlFor="area">Площадь</label>
+                <input
+                  id="area"
+                  className="input"
+                  placeholder="100 м²"
+                  value={formData.area}
+                  onChange={(e) => handleChange("area", e.target.value)}
+                  maxLength={8}
+                  disabled={isSubmitting}
+                />
+              </div>
             </div>
 
             <Button
@@ -286,17 +286,16 @@ export default function Contact() {
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                "Формирование заявки..."
+                "Формирование..."
               ) : (
                 <>
-                  Отправить в Telegram <Send size={18} />
+                  Отправить в Telegram <MessageCircle size={18} />
                 </>
               )}
             </Button>
 
             <p className="form-note">
-              Нажимая кнопку, вы перейдёте в Telegram для подтверждения заявки.
-              Все данные передаются в зашифрованном виде.
+              Нажимая кнопку, вы перейдёте в Telegram для отправки заявки
             </p>
           </motion.form>
         </div>
